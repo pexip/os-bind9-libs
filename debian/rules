@@ -1,0 +1,125 @@
+#!/usr/bin/make -f
+# Sample debian/rules that uses debhelper.
+# GNU copyright 1997 to 1999 by Joey Hess.
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+DPKG_EXPORT_BUILDFLAGS = 1
+
+export DEB_CFLAGS_MAINT_APPEND = -fno-strict-aliasing -fno-delete-null-pointer-checks -DNO_VERSION_DATE -DDIG_SIGCHASE
+
+export DPKG_GENSYMBOLS_CHECK_LEVEL := 4
+
+include /usr/share/dpkg/default.mk
+
+DEB_REVISION = $(call dpkg_late_eval,DEB_REVISION,echo '$(DEB_VERSION)' | sed -e 's/^.*-/-/')
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+COMMA = ,
+ifneq (,$(filter parallel=%,$(subst $(COMMA), ,$(DEB_BUILD_OPTIONS))))
+  NJOBS := -j $(subst parallel=,,$(filter parallel=%,$(subst $(COMMA), ,$(DEB_BUILD_OPTIONS))))
+endif
+
+export arch = $(DEB_HOST_ARCH)
+
+%:
+	dh $@ --fail-missing --exclude=.la --exclude=lwresd --exclude=__pycache__
+
+prepare_version:
+	if [ ! -f version.bak ]; then cp version version.bak; fi
+	sed -i 's,^EXTENSIONS=.*$$,EXTENSIONS=$(DEB_REVISION)-$(DEB_VENDOR),' version
+
+clean_version:
+	if [ -f version.bak ]; then cp version.bak version; fi
+
+override_dh_autoreconf: prepare_version
+	dh_autoreconf
+
+CONFIGURE_COMMON := \
+	--disable-devpoll \
+	--disable-epoll \
+	--disable-kqueue \
+	--disable-linux-caps \
+	--disable-threads \
+	--enable-ipv6 \
+	--enable-largefile \
+	--enable-rrl \
+	--enable-shared \
+	--enable-static \
+	--enable-threads \
+	--localstatedir=/ \
+	--sysconfdir=/etc/bind \
+	--with-atf=no \
+	--with-gnu-ld \
+	--with-gost=no \
+	--with-libtool \
+	--with-openssl=/usr \
+	--without-geoip2 \
+	--without-libidn2 \
+	--without-libjson \
+	--without-libxml2 \
+	--without-lmdb \
+	--without-python \
+	--without-readline \
+	--with-randomdev=/dev/urandom
+
+override_dh_auto_configure:
+	debian/checkapi
+	dh_auto_configure -B build -- \
+		--with-gssapi=/usr \
+		--libdir=/usr/lib/$(DEB_HOST_MULTIARCH) \
+		$(CONFIGURE_COMMON)
+	dh_auto_configure -B build-udeb -- \
+		--with-gssapi=no \
+		--libdir=/lib/$(DEB_HOST_MULTIARCH) \
+		--includedir=/usr/include/bind-export \
+		$(CONFIGURE_COMMON)
+	sh debian/apply-export-patch
+	# no need to build these targets here
+	cp lib/dns/dnstap.proto build/lib/dns
+
+override_dh_auto_build:
+	dh_auto_build -B build
+	dh_auto_build -B build-udeb
+
+override_dh_auto_clean: clean_version
+	dh_auto_clean -B build
+	dh_auto_clean -B build-udeb
+
+override_dh_auto_install:
+	dh_auto_install -B build      --destdir=$(CURDIR)/debian/tmp
+	dh_auto_install -B build-udeb --destdir=$(CURDIR)/debian/tmp-udeb
+
+override_dh_install:
+	dh_install --exclude=.la --exclude=lwresd --exclude=__pycache__ --fail-missing
+
+	# Fix symlink for export libs to be absolute
+	for lib in `find debian/tmp-udeb/lib/$(DEB_HOST_MULTIARCH)/ -type l -name 'lib*-export.so.*'`; do \
+	  lib=$$(basename $$lib); \
+	  dev=$$(echo $$lib | sed 's/\.so\..*/.so/'); \
+	  echo /lib/$(DEB_HOST_MULTIARCH)/$$lib /usr/lib/$(DEB_HOST_MULTIARCH)/$$dev; \
+	  dh_link -plibbind-export-dev /lib/$(DEB_HOST_MULTIARCH)/$$lib \
+	    /usr/lib/$(DEB_HOST_MULTIARCH)/$$dev; \
+	done
+
+override_dh_makeshlibs: DNS_SOVER=$(shell debian/getapi dns)
+override_dh_makeshlibs: IRS_SOVER=$(shell debian/getapi irs)
+override_dh_makeshlibs: ISCCC_SOVER=$(shell debian/getapi isccc)
+override_dh_makeshlibs: ISCCFG_SOVER=$(shell debian/getapi isccfg)
+override_dh_makeshlibs: ISC_SOVER=$(shell debian/getapi isc)
+override_dh_makeshlibs:
+	dh_makeshlibs -plibdns-export$(DNS_SOVER) --add-udeb=libdns-export$(DNS_SOVER)-udeb
+	dh_makeshlibs -plibirs-export$(IRS_SOVER) --add-udeb=libirs-export$(IRS_SOVER)-udeb
+	dh_makeshlibs -plibisccc-export$(ISCCC_SOVER) --add-udeb=libisccc-export$(ISCCC_SOVER)-udeb
+	dh_makeshlibs -plibisccfg-export$(ISCCFG_SOVER) --add-udeb=libisccfg-export$(ISCCFG_SOVER)-udeb
+	dh_makeshlibs -plibisc-export$(ISC_SOVER) --add-udeb=libisc-export$(ISC_SOVER)-udeb
+	dh_makeshlibs --remaining-packages
+
+override_dh_shlibdeps:
+	dh_shlibdeps
+	# Downgrade libcrypto1.1-udeb dependency from 1.1.1 to 1.1.0
+	# The udebs don't use any newer symbols, but due to them using
+	# shlibs the dependency is generated anyway. This blocks migration
+	# to testing until OpenSSL 1.1.1 is sorted out
+	sed -i 's:libcrypto1.1-udeb (>= 1.1.1):libcrypto1.1-udeb (>= 1.1.0):' debian/*-udeb.substvars

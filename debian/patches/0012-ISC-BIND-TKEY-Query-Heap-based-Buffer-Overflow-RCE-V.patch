@@ -1,0 +1,38 @@
+From: =?utf-8?b?T25kxZllaiBTdXLDvQ==?= <ondrej@isc.org>
+Date: Thu, 7 Jan 2021 10:44:46 +0100
+Subject: ISC BIND TKEY Query Heap-based Buffer Overflow RCE Vulnerability
+
+The ISC SPNEGO implementation was based on mod_auth_kerb and when
+CVE-2006-5989 was disclosed, the fix was not merged into the BIND 9
+codebase leading to heap-based buffer overflow.
+
+The security issue requires the tkey-gssapi-keytab configured in the
+named.conf.
+
+The original CVE-2006-5989 was:
+
+  Off-by-one error in the der_get_oid function in mod_auth_kerb 5.0
+  allows remote attackers to cause a denial of service (crash) via a
+  crafted Kerberos message that triggers a heap-based buffer overflow in
+  the component array.
+
+The vulnerability was discovered by Anonymous working with Trend Micro
+Zero Day Initiative, and responsibly reported by Trend Micro's Zero Day
+Initiative as ZDI-CAN-12302.
+---
+ lib/dns/spnego.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/dns/spnego.c b/lib/dns/spnego.c
+index ad77f24..28ead69 100644
+--- a/lib/dns/spnego.c
++++ b/lib/dns/spnego.c
+@@ -877,7 +877,7 @@ der_get_oid(const unsigned char *p, size_t len, oid *data, size_t *size) {
+ 		return (ASN1_OVERRUN);
+ 	}
+ 
+-	data->components = malloc(len * sizeof(*data->components));
++	data->components = malloc((len + 1) * sizeof(*data->components));
+ 	if (data->components == NULL) {
+ 		return (ENOMEM);
+ 	}

@@ -1,0 +1,42 @@
+From: Debian DNS Packaging <pkg-dns-devel@lists.alioth.debian.org>
+Date: Fri, 24 Nov 2017 16:26:53 +0000
+Subject: _non-linux
+
+    FTBFS on kfreebsd, hurd
+
+    Addresses-Debian-Bug: 741285, 746540
+    Signed-off-by: LaMont Jones <lamont@debian.org>
+---
+ configure.ac | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 1905d88..49ffaab 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -452,7 +452,7 @@ case "$host" in
+ 	# as it breaks how the two halves (Basic and Advanced) of the IPv6
+ 	# Socket API were designed to be used but we have to live with it.
+ 	# Define _GNU_SOURCE to pull in the IPv6 Advanced Socket API.
+-	*-linux* | *-kfreebsd*-gnu*)
++	*-linux* | *-kfreebsd*-gnu* | *-gnu*)
+ 		STD_CDEFINES="$STD_CDEFINES -D_GNU_SOURCE"
+ 		CPPFLAGS="$CPPFLAGS -D_GNU_SOURCE"
+ 		;;
+@@ -1370,7 +1370,7 @@ then
+ 		# LinuxThreads requires some changes to the way we
+ 		# deal with signals.
+ 		#
+-		*-linux*)
++		*-linux*|*-kfreebsd*-gnu)
+ 			AC_DEFINE(HAVE_LINUXTHREADS)
+ 			;;
+ 		#
+@@ -2735,7 +2735,6 @@ case "$host" in
+ 		;;
+ 	*)
+ 		AC_CHECK_LIB(socket, socket)
+-		AC_CHECK_LIB(nsl, inet_addr)
+ 		;;
+ esac
+ 

@@ -1,0 +1,288 @@
+Source: bind9-libs
+Section: net
+Priority: optional
+Maintainer: Debian DNS Team <team+dns@tracker.debian.org>
+Uploaders: LaMont Jones <lamont@debian.org>,
+           Michael Gilbert <mgilbert@debian.org>,
+           Robie Basak <robie.basak@canonical.com>,
+           Ondřej Surý <ondrej@debian.org>,
+           Bernhard Schmidt <berni@debian.org>
+Build-Depends: bison,
+               debhelper (>= 10),
+               dh-exec,
+               libkrb5-dev,
+               libssl-dev,
+               libtool,
+               pkg-config
+Standards-Version: 4.5.0
+Vcs-Browser: https://salsa.debian.org/dns-team/bind9-libs
+Vcs-Git: https://salsa.debian.org/dns-team/bind9-libs.git
+Homepage: https://www.isc.org/downloads/bind/
+
+Package: libbind-dev
+Section: libdevel
+Architecture: any
+Replaces: bind9 (<< 1:9.10.3.dfsg.P2-4)
+Depends: libbind9-161 (= ${binary:Version}),
+         libdns1110 (= ${binary:Version}),
+         libirs161 (= ${binary:Version}),
+         libisc1105 (= ${binary:Version}),
+         libisccc161 (= ${binary:Version}),
+         libisccfg163 (= ${binary:Version}),
+         liblwres161 (= ${binary:Version}),
+         ${misc:Depends}
+Description: Static Libraries and Headers used by BIND
+ This package delivers archive-style libraries, header files, and API man
+ pages for libbind, libdns, libisc, and liblwres.  These are only needed
+ if you want to compile other packages that need more nameserver API than the
+ resolver code provided in libc.
+
+Package: libbind9-161
+Section: libs
+Architecture: any
+Multi-Arch: same
+Depends: libdns1110 (= ${binary:Version}),
+         libisc1105 (= ${binary:Version}),
+         libisccfg163 (= ${binary:Version}),
+         ${misc:Depends},
+         ${shlibs:Depends}
+Description: BIND9 Shared Library used by BIND
+ The Berkeley Internet Name Domain (BIND) implements an Internet domain
+ name server.  BIND is the most widely-used name server software on the
+ Internet, and is supported by the Internet Software Consortium, www.isc.org.
+ .
+ This package delivers the libbind9 shared library used by BIND's daemons and
+ clients.
+
+Package: libdns1110
+Section: libs
+Architecture: any
+Multi-Arch: same
+Depends: libisc1105 (= ${binary:Version}),
+         ${misc:Depends},
+         ${shlibs:Depends}
+Description: DNS Shared Library used by BIND
+ The Berkeley Internet Name Domain (BIND) implements an Internet domain
+ name server.  BIND is the most widely-used name server software on the
+ Internet, and is supported by the Internet Software Consortium, www.isc.org.
+ .
+ This package delivers the libdns shared library used by BIND's daemons and
+ clients.
+
+Package: libirs161
+Section: libs
+Architecture: any
+Multi-Arch: same
+Depends: libisc1105 (= ${binary:Version}),
+         ${misc:Depends},
+         ${shlibs:Depends}
+Description: DNS Shared Library used by BIND
+ The Berkeley Internet Name Domain (BIND) implements an Internet domain
+ name server.  BIND is the most widely-used name server software on the
+ Internet, and is supported by the Internet Software Consortium, www.isc.org.
+ .
+ This package delivers the libirs shared library used by BIND's daemons and
+ clients.
+
+Package: libisc1105
+Section: libs
+Architecture: any
+Multi-Arch: same
+Depends: ${misc:Depends},
+         ${shlibs:Depends}
+Description: ISC Shared Library used by BIND
+ The Berkeley Internet Name Domain (BIND) implements an Internet domain
+ name server.  BIND is the most widely-used name server software on the
+ Internet, and is supported by the Internet Software Consortium, www.isc.org.
+ .
+ This package delivers the libisc shared library used by BIND's daemons and
+ clients.
+
+Package: liblwres161
+Section: libs
+Architecture: any
+Multi-Arch: same
+Depends: ${misc:Depends},
+         ${shlibs:Depends}
+Description: Lightweight Resolver Library used by BIND
+ The Berkeley Internet Name Domain (BIND) implements an Internet domain
+ name server.  BIND is the most widely-used name server software on the
+ Internet, and is supported by the Internet Software Consortium, www.isc.org.
+ .
+ This package delivers the liblwres shared library used by BIND's daemons
+ and clients.
+
+Package: libisccc161
+Section: libs
+Architecture: any
+Multi-Arch: same
+Depends: libisc1105 (= ${binary:Version}),
+         ${misc:Depends},
+         ${shlibs:Depends}
+Description: Command Channel Library used by BIND
+ The Berkeley Internet Name Domain (BIND) implements an Internet domain
+ name server.  BIND is the most widely-used name server software on the
+ Internet, and is supported by the Internet Software Consortium, www.isc.org.
+ .
+ This package delivers the libisccc shared library used by BIND's daemons
+ and clients, particularly rndc.
+
+Package: libisccfg163
+Section: libs
+Architecture: any
+Multi-Arch: same
+Depends: libdns1110 (= ${binary:Version}),
+         libisc1105 (= ${binary:Version}),
+         libisccc161 (= ${binary:Version}),
+         ${misc:Depends},
+         ${shlibs:Depends}
+Description: Config File Handling Library used by BIND
+ The Berkeley Internet Name Domain (BIND) implements an Internet domain
+ name server.  BIND is the most widely-used name server software on the
+ Internet, and is supported by the Internet Software Consortium, www.isc.org.
+ .
+ This package delivers the libisccfg shared library used by BIND's daemons
+ and clients to read and write ISC-style configuration files like named.conf
+ and rndc.conf.
+
+Package: libbind-export-dev
+Section: libdevel
+Architecture: any
+Conflicts: libbind-dev
+Depends: libdns-export1110 (= ${binary:Version}),
+         libirs-export161 (= ${binary:Version}),
+         libisc-export1105 (= ${binary:Version}),
+         libisccc-export161 (= ${binary:Version}),
+         libisccfg-export163 (= ${binary:Version}),
+         ${misc:Depends}
+Description: Development files for the exported BIND libraries
+ The Berkeley Internet Name Domain (BIND) implements an Internet domain
+ name server.  BIND is the most widely-used name server software on the
+ Internet, and is supported by the Internet Software Consortium, www.isc.org.
+ .
+ This package delivers development files for the exported BIND libraries.
+
+Package: libdns-export1110
+Section: libs
+Architecture: any
+Pre-Depends: ${misc:Pre-Depends}
+Depends: ${misc:Depends},
+         ${shlibs:Depends}
+Description: Exported DNS Shared Library
+ The Berkeley Internet Name Domain (BIND) implements an Internet domain
+ name server.  BIND is the most widely-used name server software on the
+ Internet, and is supported by the Internet Software Consortium, www.isc.org.
+ .
+ This package delivers the exported libdns shared library.
+
+Package: libdns-export1110-udeb
+Section: debian-installer
+Architecture: any
+Multi-Arch: same
+Depends: ${misc:Depends},
+         ${shlibs:Depends}
+Package-Type: udeb
+Description: Exported DNS library for debian-installer
+
+Package: libirs-export161
+Section: libs
+Architecture: any
+Pre-Depends: ${misc:Pre-Depends}
+Depends: ${misc:Depends},
+         ${shlibs:Depends}
+Description: Exported IRS Shared Library
+ The Berkeley Internet Name Domain (BIND) implements an Internet domain
+ name server.  BIND is the most widely-used name server software on the
+ Internet, and is supported by the Internet Software Consortium, www.isc.org.
+ .
+ This package delivers the exported libirs shared library.
+
+Package: libirs-export161-udeb
+Section: debian-installer
+Architecture: any
+Multi-Arch: same
+Depends: ${misc:Depends},
+         ${shlibs:Depends}
+Package-Type: udeb
+Description: Exported IRS library for debian-installer
+
+Package: libisc-export1105
+Section: libs
+Architecture: any
+Multi-Arch: same
+Pre-Depends: ${misc:Pre-Depends}
+Depends: ${misc:Depends},
+         ${shlibs:Depends}
+Description: Exported ISC Shared Library
+ The Berkeley Internet Name Domain (BIND) implements an Internet domain
+ name server.  BIND is the most widely-used name server software on the
+ Internet, and is supported by the Internet Software Consortium, www.isc.org.
+ .
+ This package delivers the exported libisc shared library.
+
+Package: libisc-export1105-udeb
+Section: debian-installer
+Architecture: any
+Multi-Arch: same
+Depends: ${misc:Depends},
+         ${shlibs:Depends}
+Package-Type: udeb
+Description: Exported ISC library for debian-installer
+
+Package: libisccc-export161
+Section: libs
+Architecture: any
+Multi-Arch: same
+Depends: libisc-export1105,
+         ${misc:Depends},
+         ${shlibs:Depends}
+Description: Command Channel Library used by BIND
+ The Berkeley Internet Name Domain (BIND) implements an Internet domain
+ name server.  BIND is the most widely-used name server software on the
+ Internet, and is supported by the Internet Software Consortium, www.isc.org.
+ .
+ This package delivers the libisccc shared library used by BIND's daemons
+ and clients, particularly rndc.
+
+Package: libisccc-export161-udeb
+Section: debian-installer
+Architecture: any
+Multi-Arch: same
+Depends: libisc-export1105-udeb,
+         ${misc:Depends},
+         ${shlibs:Depends}
+Package-Type: udeb
+Description: Command Channel Library used by BIND
+ The Berkeley Internet Name Domain (BIND) implements an Internet domain
+ name server.  BIND is the most widely-used name server software on the
+ Internet, and is supported by the Internet Software Consortium, www.isc.org.
+ .
+ This package delivers the libisccc shared library used by BIND's daemons
+ and clients, particularly rndc.
+
+Package: libisccfg-export163
+Section: libs
+Architecture: any
+Pre-Depends: ${misc:Pre-Depends}
+Depends: ${misc:Depends},
+         ${shlibs:Depends}
+Description: Exported ISC CFG Shared Library
+ The Berkeley Internet Name Domain (BIND) implements an Internet domain
+ name server.  BIND is the most widely-used name server software on the
+ Internet, and is supported by the Internet Software Consortium, www.isc.org.
+ .
+ This package delivers the exported libisccfg shared library.
+
+Package: libisccfg-export163-udeb
+Section: debian-installer
+Architecture: any
+Multi-Arch: same
+Depends: ${misc:Depends},
+         ${shlibs:Depends}
+Package-Type: udeb
+Description: Exported ISC CFG library for debian-installer
+ The Berkeley Internet Name Domain (BIND) implements an Internet domain
+ name server.  BIND is the most widely-used name server software on the
+ Internet, and is supported by the Internet Software Consortium, www.isc.org.
+ .
+ This package delivers the exported libisccfg shared library.

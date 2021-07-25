@@ -1,0 +1,22 @@
+Description: Check if sock->pending_send is set
+before calling dispatch_send(). This would prevent
+the assertion failure in cases where a socket is not dead (closed)
+and its still pending to send data and the process_fd
+event gets triggered due a wakeup.
+
+Author: Jorge Niedbalski <jorge.niedbalski@canonical.com>
+Bug-Ubuntu: https://bugs.launchpad.net/bugs/1872118
+Forwarded: no
+Last-Update: 2020-08-03
+
+--- bind9-libs-9.11.16+dfsg.orig/lib/isc/unix/socket.c
++++ bind9-libs-9.11.16+dfsg/lib/isc/unix/socket.c
+@@ -4050,7 +4050,7 @@ check_write:
+ 		if (!SOCK_DEAD(sock)) {
+ 			if (sock->connecting)
+ 				dispatch_connect(sock);
+-			else
++			else if (!sock->pending_send)
+ 				dispatch_send(sock);
+ 		}
+ 		unwatch_write = true;

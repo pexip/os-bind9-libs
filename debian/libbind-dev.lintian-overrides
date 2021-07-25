@@ -1,0 +1,2 @@
+libbind-dev: binary-without-manpage usr/bin/isc-config.sh
+libbind-dev: script-with-language-extension usr/bin/isc-config.sh
