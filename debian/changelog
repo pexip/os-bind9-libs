@@ -1,3 +1,9 @@
+bind9-libs (1:9.11.19+dfsg-2.1pexip1) pexip; urgency=medium
+
+  * Prepare Pexip packaging
+
+ -- Mark Hymers <mark.hymers@pexip.com>  Tue, 21 Jun 2022 14:57:19 +0100
+
 bind9-libs (1:9.11.19+dfsg-2.1) unstable; urgency=medium
 
   * Non-maintainer upload.
