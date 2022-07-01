@@ -1,3 +1,9 @@
+bind9-libs (1:9.11.19+dfsg-2.1pexip3) pexip-bullseye; urgency=medium
+
+  * Rebuild for override changes
+
+ -- Mark Hymers <mark.hymers@pexip.com>  Fri, 01 Jul 2022 09:55:52 +0100
+
 bind9-libs (1:9.11.19+dfsg-2.1pexip2) pexip-bullseye; urgency=medium
 
   * Main bullseye build
