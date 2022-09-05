@@ -1,3 +1,9 @@
+bind9-libs (1:9.11.19+dfsg-2.1pexip4) pexip-bullseye; urgency=medium
+
+  * Bullseye rebuild for ARM64 inclusion
+
+ -- Mark Hymers <mark.hymers@pexip.com>  Mon, 05 Sep 2022 10:31:15 +0100
+
 bind9-libs (1:9.11.19+dfsg-2.1pexip3) pexip-bullseye; urgency=medium
 
   * Rebuild for override changes
